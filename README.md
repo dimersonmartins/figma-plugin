@@ -1,4 +1,4 @@
-# Vue Plugin Template for Figma
+# Plugin for Figma With Vue
 
 ## Features:
 
