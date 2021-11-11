@@ -5,6 +5,7 @@ export const getAllCircleIds = (initialcharacter: String): Array<CircleModel> =>
 
     let listIds = [];
     let oldId = '';
+    
 
     for (const node of figma.currentPage.selection) {
 
