@@ -15,18 +15,14 @@ export default {
     TabComponent
   },
   data() {
-    return {
-      message: ""
-    };
+    return {};
   },
   mounted() {
     window.selectMenu.init();
     window.iconInput.init();
     window.disclosure.init();
   },
-  methods: {
-    createNode() {}
-  }
+  methods: {}
 };
 </script>
 

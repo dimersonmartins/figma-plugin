@@ -1,7 +1,7 @@
-import { JsonWebKey } from 'crypto';
 import { revomeCharacters, removeNumbers } from '../util/helpers';
+import { CircleModel } from '../models/circlemodel';
 
-export const getAllCircleIds = (initialcharacter: String): Array<JsonWebKey> => {
+export const getAllCircleIds = (initialcharacter: String): Array<CircleModel> => {
 
     let listIds = [];
     let oldId = '';
@@ -31,13 +31,18 @@ export const getAllCircleIds = (initialcharacter: String): Array<JsonWebKey> => 
                     let id = 0;
 
                     if (listIds.length > 0) {
-                        const nextId = listIds.find(node => node.id === oldId);
-                        id = (nextId.value + 1)
+                        const nextId = listIds.find(node => node.Id === oldId);
+                        id = (nextId.Value + 1)
                     } else {
                         id = charIds;
                     }
 
-                    listIds.push({ id: children.id, value: id });
+                    let circlemodel = new CircleModel();
+                    circlemodel.Id = children.id;
+                    circlemodel.Value = id;
+
+                    listIds.push(circlemodel);
+
                     oldId = children.id;
                 }
             }
@@ -47,15 +52,15 @@ export const getAllCircleIds = (initialcharacter: String): Array<JsonWebKey> => 
     return listIds;
 }
 
-export const alterCircleIds = (listIds: Array<JsonWebKey>, initiChar: String): void => {
+export const alterCircleIds = (listIds: Array<CircleModel>, initiChar: String): void => {
     figma.currentPage.selection.forEach(node => {
         if (node.type === 'GROUP' && node.name === 'Marcação') {
             const childrens = node.children;
             for (const children of childrens) {
                 if (children.type === 'TEXT') {
 
-                    const id = listIds.find(node => node.id === children.id);
-                    const charId = id.value.toString();
+                    const circlemodel = listIds.find(node => node.Id === children.id);
+                    const charId = circlemodel.Value.toString();
 
                     let newId = '';
 
