@@ -19,10 +19,4 @@ export const getAllComponnets = (): void => {
 
 
 
-export const scanner = () => {
-    figma.ui.onmessage = msg => {
-        if (msg.type === 'scanner') {
-            getAllComponnets();
-        }
-    }
-}
+export const scanner = () => getAllComponnets();

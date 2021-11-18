@@ -78,12 +78,8 @@ export const alterCircleIds = (sortPositionList: Array<CircleModel>, initiChar: 
     });   
 }
 
-export const blipAlterId = () => {
-    figma.ui.onmessage = msg => {
-        if (msg.type === 'blipAlterId') {
-            const listIds = getAllCircleIds(msg.initialcharacter);
-            const initiChar = removeNumbers(msg.initialcharacter);
-            alterCircleIds(listIds, initiChar);
-        }
-    }
+export const blipAlterId = (msg) => {
+    const listIds = getAllCircleIds(msg.initialcharacter);
+    const initiChar = removeNumbers(msg.initialcharacter);
+    alterCircleIds(listIds, initiChar);
 }
