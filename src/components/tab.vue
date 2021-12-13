@@ -22,6 +22,7 @@
         </ul>
       </div>
     </div>
+    <button class="uk-button uk-button-secondary">Secondary</button>
   </div>
 </template>
 

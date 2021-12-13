@@ -1,18 +1,19 @@
 <template>
   <div>
-    <TabComponent />
+    <NavBar />
+    <router-view />
   </div>
 </template>
-
 <script>
+import "./ukit/js/uikit-icons";
+import "./ukit/js/uikit";
 import "./figma-ui/js/selectMenu";
 import "./figma-ui/js/iconInput";
 import "./figma-ui/js/disclosure";
-import TabComponent from "./components/tab.vue";
-
+import NavBar from "./components/navbar.vue";
 export default {
   components: {
-    TabComponent
+    NavBar
   },
   data() {
     return {};
@@ -28,4 +29,8 @@ export default {
 
 <style lang='scss'>
 @import "./figma-ui/figma-plugin-ds";
+@import "./ukit/css/uikit-rtl.css";
+@import "./ukit/css/uikit-rtl.min.css";
+@import "./ukit/css/uikit.css";
+@import "./ukit/css/uikit.min.css";
 </style>

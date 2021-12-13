@@ -1,18 +1,18 @@
-export const getAllTrackings = (initialcharacter: String): Array<String> => {
-    let listIds = [];
+export const getAllTrackings = (): Array<String> => {
+  
+    let trackings = [];
     for (const node of figma.currentPage.selection) {
-        if (node.type === 'TEXT') {
-            listIds.push(node.characters);
+        if (node.type === 'INSTANCE' && node.name === "Tracking") {
+            const child = node.children[0];
+            if (child.type === 'TEXT') {
+                trackings.push(child.characters);
+            }
         }
     }
-    return listIds;
+
+    return trackings;
 }
 
-export const blipTrackings = () => {
-    figma.ui.onmessage = msg => {
-        if (msg.type === 'getAllTrackings') {
-            const listIds = getAllTrackings(msg.initialcharacter);
-            console.log(JSON.stringify(listIds))
-        }
-    }
-}
+
+
+export const blipTrackings = () => getAllTrackings();

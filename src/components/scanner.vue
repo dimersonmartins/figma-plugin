@@ -1,9 +1,6 @@
 <template>
   <div>
-    <li>
-      <br />
-      <button class="uk-button uk-button-primary" @click="scanner">Scanner</button>
-    </li>
+    <button class="uk-button uk-button-primary" @click="scanner">Scanner</button>
   </div>
 </template>
 
@@ -11,9 +8,7 @@
 import axios from "axios";
 export default {
   data() {
-    return {
-      
-    };
+    return {};
   },
   methods: {
     scanner() {

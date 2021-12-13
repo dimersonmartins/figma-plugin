@@ -4,12 +4,14 @@
 	"main": "index.js",
 	"license": "MIT",
 	"scripts": {
-		"dev": "webpack --mode=development --watch",
+		"start": "webpack --mode=development --watch",
 		"build": "webpack --mode=production"
 	},
 	"dependencies": {
 		"axios": "^0.24.0",
-		"https": "^1.0.0"
+		"https": "^1.0.0",
+		"vue-router": "^3.5.3",
+		"vuex": "^3.6.2"
 	},
 	"devDependencies": {
 		"@figma/plugin-typings": "^1.38.0",
