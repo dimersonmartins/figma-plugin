@@ -61,7 +61,9 @@ module.exports = (env, argv) => ({
 	},
 
 	// Webpack tries these extensions for you if you omit the extension like "import './file'"
-	resolve: { extensions: ['.tsx', '.ts', '.jsx', '.js'] },
+	resolve: {
+		extensions: ['.tsx', '.ts', '.jsx', '.js'],
+	},
 
 	output: {
 		filename: '[name].js',
@@ -72,26 +74,26 @@ module.exports = (env, argv) => ({
 	plugins:
 		argv.mode === 'production'
 			? [
-					new VueLoaderPlugin(),
-					new RemovePlugin({
-						after: { include: ['dist/ui.js'] }
-					}),
-					new HtmlWebpackPlugin({
-						template: './src/ui.html',
-						filename: 'ui.html',
-						inlineSource: '.(js|css|scss)$',
-						chunks: ['ui']
-					}),
-					new HtmlWebpackInlineSourcePlugin()
-			  ]
+				new VueLoaderPlugin(),
+				new RemovePlugin({
+					after: { include: ['dist/ui.js'] }
+				}),
+				new HtmlWebpackPlugin({
+					template: './src/ui.html',
+					filename: 'ui.html',
+					inlineSource: '.(js|css|scss)$',
+					chunks: ['ui']
+				}),
+				new HtmlWebpackInlineSourcePlugin()
+			]
 			: [
-					new VueLoaderPlugin(),
-					new HtmlWebpackPlugin({
-						template: './src/ui.html',
-						filename: 'ui.html',
-						inlineSource: '.(js|css|scss)$',
-						chunks: ['ui']
-					}),
-					new HtmlWebpackInlineSourcePlugin()
-			  ]
+				new VueLoaderPlugin(),
+				new HtmlWebpackPlugin({
+					template: './src/ui.html',
+					filename: 'ui.html',
+					inlineSource: '.(js|css|scss)$',
+					chunks: ['ui']
+				}),
+				new HtmlWebpackInlineSourcePlugin()
+			]
 });

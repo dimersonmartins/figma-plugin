@@ -3,8 +3,11 @@
     <div class="uk-navbar-left">
       <ul class="uk-navbar-nav">
         <li class="uk-active">
-          <a href="#" @click="selectBlip = 'UX'">UX</a>
-          <div class="uk-navbar-dropdown">
+          <!-- <router-link to="/" class="clearLink">
+            <a href="#" @click="selectBlip = 'UX'">UX</a>
+          </router-link> -->
+           <a href="#" @click="selectBlip = 'UX'" disable>UX</a>
+          <!-- <div class="uk-navbar-dropdown">
             <ul class="uk-nav uk-navbar-dropdown-nav">
               <li>
                 <router-link to="/">IDs</router-link>
@@ -14,23 +17,25 @@
                 <router-link to="/">Gerar Sumário</router-link>
               </li>
             </ul>
-          </div>
+          </div>-->
         </li>
-        <li>
-          <a href="#" @click="selectBlip = 'APIN'">APIN</a>
-          <div class="uk-navbar-dropdown">
+        <!-- <li>
+          <router-link to="/trackins" class="clearLink">
+            <a href="#" @click="selectBlip = 'APIN'">Tracking</a>
+          </router-link>
+           <div class="uk-navbar-dropdown">
             <ul class="uk-nav uk-navbar-dropdown-nav">
               <li>
                 <router-link to="/trackins">Consultar Trackings</router-link>
               </li>
-              <!-- <li class="uk-nav-divider"></li>
+              <li class="uk-nav-divider"></li>
               <li>
                 <router-link to="/">Testar Trackings</router-link>
-              </li> -->
+              </li>
             </ul>
-          </div>
-        </li>
-        <li>
+          </div> 
+        </li> -->
+        <!-- <li>
           <a href="#" @click="selectBlip = 'DEV'">DEV</a>
           <div class="uk-navbar-dropdown">
             <ul class="uk-nav uk-navbar-dropdown-nav">
@@ -47,7 +52,7 @@
               </li>
             </ul>
           </div>
-        </li>
+        </li>-->
       </ul>
     </div>
     <div class="uk-navbar-right">
@@ -110,4 +115,7 @@ export default {
 </script>
 
 <style>
+.clearLink {
+  text-decoration: none;
+}
 </style>

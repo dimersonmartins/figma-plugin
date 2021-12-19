@@ -7,31 +7,54 @@ function uuidv4() {
     );
 }
 
+// async function Tracking(category, rageDate) {
+//    return new Promise((resolve, reject) => {
+//         const parameter = encodeURIComponent(category)
+//         const uri = "/event-track/" + parameter + rageDate;
+//         api.post("commands",
+//             {
+//                 "id": uuidv4(),
+//                 "to": "postmaster@analytics.msging.net",
+//                 "method": "get",
+//                 "uri": uri
+//             },
+//             {
+//                 headers: {
+//                     "Content-Type": "application/json",
+//                     "Authorization": "Key dGFrZWNlbHVsYXRvcm9udG86dk16MGRSaVRueDd3OEZnSEVXOXU="
+//                 }
+//             })
+//             .then((resp) => {
+//                 resolve(resp)
+//             })
+//             .catch((error) => {
+//                 reject(error)
+//             });
+//     })
+// }
+
+
 async function Tracking(category, rageDate) {
-   return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
+        const got = require('got');
         const parameter = encodeURIComponent(category)
         const uri = "/event-track/" + parameter + rageDate;
-        api.post("commands",
-            {
-                "id": uuidv4(),
-                "to": "postmaster@analytics.msging.net",
-                "method": "get",
-                "uri": uri
-            },
-            {
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": "Key dGFrZWNlbHVsYXRvcm9udG86dk16MGRSaVRueDd3OEZnSEVXOXU="
-                }
-            })
-            .then((resp) => {
-                resolve(resp)
-            })
-            .catch((error) => {
-                reject(error)
-            });
+        const { data } = await got.post('https://http.msging.net/commands', {
+            "id": uuidv4(),
+            "to": "postmaster@analytics.msging.net",
+            "method": "get",
+            "uri": uri
+        }, {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Key dGFrZWNlbHVsYXRvcm9udG86dk16MGRSaVRueDd3OEZnSEVXOXU="
+            }
+        }).json();
+        resolve(data)
+        console.log(data);
     })
 }
+
 
 
 export default {
