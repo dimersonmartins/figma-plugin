@@ -1,0 +1,11 @@
+{
+	"name": "[DEV] BlipToolkit",
+	"api": "1.0.0",
+	"main": "dist/controllers.js",
+	"ui": "dist/ui.html",
+	"id": "1054425140448349222",
+	"editorType": [
+		"figma",
+		"figjam"
+	]
+}
