@@ -1,5 +1,6 @@
 // Figma Plugin API version 1, update 13
 
+
 declare global {
 	// Global variable with Figma's plugin API.
 	const figma: PluginAPI;

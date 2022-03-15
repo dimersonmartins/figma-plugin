@@ -1,5 +1,5 @@
 {
-	"name": "[DEV] BlipToolkit",
+	"name": "[BETA] BlipToolkit",
 	"api": "1.0.0",
 	"main": "dist/controllers.js",
 	"ui": "dist/ui.html",

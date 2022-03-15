@@ -13,4 +13,4 @@ export const getAllTrackings = (): Array<String> => {
 
 
 
-export const blipTrackings = () => getAllTrackings();
+export const getTrackings = () => getAllTrackings();
