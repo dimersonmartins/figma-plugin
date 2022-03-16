@@ -24,7 +24,7 @@
               <input class="input" v-model="dataFim" type="date" placeholder="Data final" />
             </div>
             <div class="control">
-              <a class="button is-small is-info" @click="blipTracking">Consultar</a>
+              <a class="button is-small is-info" @click="submit">Consultar</a>
             </div>
           </div>
         </div>
@@ -79,37 +79,7 @@ export default {
       gridGroupContent: [],
       gridSimpleListContent: [],
       selectedGraphicsType: 0,
-      gridToCsv: [],
-      graphicsTypes: [
-        {
-          id: 0,
-          name: "Visualizar em Gráficos"
-        },
-        {
-          id: 1,
-          name: "Grupos"
-        },
-        // {
-        //   id: 2,
-        //   name: "Lista"
-        // },
-        {
-          id: 3,
-          name: "Linha"
-        },
-        {
-          id: 4,
-          name: "Pizza"
-        },
-        {
-          id: 5,
-          name: "Coluna"
-        },
-        {
-          id: 6,
-          name: "Rosca"
-        }
-      ]
+      gridToCsv: []
     };
   },
   methods: {
@@ -125,7 +95,7 @@ export default {
       );
     },
 
-    blipTracking() {
+    submit() {
       parent.postMessage(
         { pluginMessage: { type: Contants.POSTMESSAGER_ALL_TRACKINGS } },
         "*"
@@ -180,6 +150,18 @@ export default {
       document.body.appendChild(element);
       element.click();
       document.body.removeChild(element);
+    },
+    processCountAllTrackings() {
+      let totalActions = this.gridGroupContent.forEach(el => {
+        if (el && el.group) {
+          el.group.forEach(gp => {
+            gp["totalActions"] = el.group.reduce(
+              (a, b) => a + (b["count"] || 0),
+              0
+            );
+          });
+        }
+      });
     }
   },
   mounted() {
@@ -210,6 +192,7 @@ export default {
             self.processGroupTracks(items);
             self.gridSimpleListContent.push(items);
           }
+          self.processCountAllTrackings();
         }
       }
     };
@@ -236,6 +219,9 @@ export default {
       } else {
         return "?startDate=" + this.dataInicio + "&endDate=" + this.dataFim;
       }
+    },
+    graphicsTypes() {
+      return this.$store.state.graphicsTypes;
     }
   },
   watch: {}

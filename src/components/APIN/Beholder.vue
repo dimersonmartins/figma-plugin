@@ -16,7 +16,7 @@
         </div>
       </div>
       <div class="column">
-        <button :class="btnClasstype" @click="blipTracking">{{btnText}}</button>
+        <button :class="btnClasstype" @click="submit">{{btnText}}</button>
       </div>
     </div>
     <br />
@@ -93,7 +93,7 @@ export default {
         "*"
       );
     },
-    blipTracking() {
+    submit() {
       if (!this.btnStart) {
         this.btnText = "Parar";
         this.btnClasstype = "button is-small is-danger";
@@ -118,48 +118,6 @@ export default {
           return -1;
         }
         return 0;
-      });
-    },
-    compareElements(listToCompare, el2) {
-      return listToCompare.find(
-        el1 =>
-          JSON.stringify(el1).replace(" ", "") ===
-          JSON.stringify(el2).replace(" ", "")
-      );
-    },
-    async updateTrack(track) {
-      let index = this.removeList.findIndex(
-        el => el.category == track.category
-      );
-      console.log("track", JSON.stringify(track));
-      console.log("Before", JSON.stringify(this.removeList[index]));
-      this.removeList[index].count = track.count;
-      console.log("After", JSON.stringify(this.removeList[index]));
-    },
-    isDuplicate(listToCompare, track) {
-      return listToCompare.some(
-        el =>
-          el.category == track.category &&
-          el.action == track.action &&
-          el.count == track.count
-      );
-    },
-    async removeDuplicate() {
-      return new Promise((resolve, reject) => {
-        this.gridContent = this.gridContent.reduce((list, track) => {
-          const match = list.find(
-            item =>
-              item.category === track.category &&
-              item.action === track.action &&
-              item.storageDate === track.storageDate
-          );
-          if (!match) {
-            return list.concat([track]);
-          } else {
-            return list;
-          }
-        }, []);
-        resolve();
       });
     },
     async delay(time) {
@@ -187,8 +145,6 @@ export default {
                 el.action == element.action &&
                 el.isLoading == true
             );
-            console.log("indexIsLoading", indexIsLoading);
-            console.log("loading", this.gridContent[indexIsLoading]);
 
             this.$set(this.gridContent, indexIsLoading, {
               isLoading: false,
