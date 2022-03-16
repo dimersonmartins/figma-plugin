@@ -4,16 +4,13 @@
       <span class="tag is-dark">Configurações</span>
     </nav>
     <div class="box">
-      <div class="field">
+      <div class="field has-addons">
         <label class="label">Chave de autorização</label>
-        <div class="control">
-          <input class="input is-success" type="text" placeholder="Key" value v-model="token" />
+        <div class="control" style="width: 100%">
+          <input class="input is-success" type="password" placeholder="Key" value v-model="token" />
         </div>
-      </div>
-
-      <div class="field is-grouped">
         <div class="control">
-          <button class="button is-link" @click="save">{{btnText}}</button>
+          <button class="button is-small is-link" @click="save">{{btnText}}</button>
         </div>
       </div>
     </div>
