@@ -5,7 +5,7 @@
     </nav>
     <div class="box">
       <div class="columns is-gapless">
-         <div class="column"></div>
+        <div class="column"></div>
         <div class="column">
           <div class="field has-addons">
             <div class="control">
@@ -30,7 +30,7 @@
         <div class="column"></div>
         <!-- <div class="column">
           <button class="button is-small is-success">Exportar tudo</button>
-        </div> -->
+        </div>-->
       </div>
     </div>
 
@@ -38,7 +38,7 @@
       :gridContent="gridGroupContent"
       v-if="selectedGraphicsType == 0 || selectedGraphicsType == 1"
     />
-    <GraphicsList :gridContent="gridSimpleListContent" v-if="selectedGraphicsType == 2" />
+    <!-- <GraphicsList :gridContent="gridSimpleListContent" v-if="selectedGraphicsType == 2" /> -->
     <GraphicsLine :gridContent="gridGroupContent" v-if="selectedGraphicsType == 3" />
     <GraphicsPizza :gridContent="gridGroupContent" v-if="selectedGraphicsType == 4" />
     <GraphicsBar :gridContent="gridGroupContent" v-if="selectedGraphicsType == 5" />
@@ -81,10 +81,10 @@ export default {
           id: 1,
           name: "Grupos"
         },
-        {
-          id: 2,
-          name: "Lista"
-        },
+        // {
+        //   id: 2,
+        //   name: "Lista"
+        // },
         {
           id: 3,
           name: "Linha"
@@ -122,17 +122,6 @@ export default {
         { pluginMessage: { type: Contants.POSTMESSAGER_ALL_TRACKINGS } },
         "*"
       );
-    },
-    processListTrack(categories, items) {
-      // this.gridSimpleListContent["categories"] = categories;
-      // this.gridSimpleListContent["items"] = [];
-      // let track = {}
-      // items.forEach(element => {
-      //   track[element.category] = track[element.category] || [];
-      //   track[element.category].push(element);
-      // });
-
-      this.gridSimpleListContent.push(items);
     },
     processGroupTracks(items) {
       let track = {};
@@ -186,7 +175,7 @@ export default {
 
             const items = resp.data.resource.items;
             self.processGroupTracks(items);
-            self.processListTrack(listOfTrackings, items);
+            self.gridSimpleListContent.push(items);
           }
         }
       }

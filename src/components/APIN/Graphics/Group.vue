@@ -5,6 +5,7 @@
       <div class="column is-four-fifths" v-if="tracking.group">
         <div class="box">
           <span class="tag is-dark">{{tracking.group[0].category}}</span>
+          <span class="tag is-info">{{tracking.group.length}}</span>
           <hr />
           <div class="columns is-gapless">
             <div class="column">Ação</div>

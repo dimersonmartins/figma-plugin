@@ -10,7 +10,7 @@ function uuidv4() {
 async function RangeDateTracking(keyAuthorize, category, rageDate) {
     return new Promise((resolve, reject) => {
         const parameter = encodeURIComponent(category)
-        const uri = "/event-track/" + parameter + rageDate;
+        const uri = "/event-track/" + parameter + rageDate + "&$take=500&$skip=0";
         api.post("commands",
             {
                 "id": uuidv4(),
