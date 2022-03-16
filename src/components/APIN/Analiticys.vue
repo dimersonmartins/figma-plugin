@@ -1,7 +1,16 @@
 <template>
   <div>
     <nav class="breadcrumb" aria-label="breadcrumbs">
-      <span class="tag is-dark">APIN/AIC - Análise</span>
+      <div class="columns">
+        <div class="column is-four-fifths">
+          <span class="tag is-dark">APIN/AIC - Análise</span>
+        </div>
+        <div class="column"></div>
+        <div class="column"></div>
+        <div class="column" v-if="gridGroupContent.length > 0">
+          <button class="button is-small is-success" @click="generateFile">Exportar</button>
+        </div>
+      </div>
     </nav>
     <div class="box">
       <div class="columns is-gapless">
@@ -28,9 +37,6 @@
           </div>
         </div>
         <div class="column"></div>
-        <!-- <div class="column">
-          <button class="button is-small is-success">Exportar tudo</button>
-        </div>-->
       </div>
     </div>
 
@@ -48,6 +54,7 @@
 
 <script>
 import Contants from "../../util/contants";
+import { Json2Csv } from "../../util/helpers.ts";
 import blipapi from "../../services/blipapi";
 import GraphicsGroup from "./Graphics/Group.vue";
 import GraphicsList from "./Graphics/List.vue";
@@ -72,6 +79,7 @@ export default {
       gridGroupContent: [],
       gridSimpleListContent: [],
       selectedGraphicsType: 0,
+      gridToCsv: [],
       graphicsTypes: [
         {
           id: 0,
@@ -148,6 +156,30 @@ export default {
       }, {});
 
       this.gridGroupContent.push(result);
+    },
+    processToCsv() {
+      this.gridToCsv = [];
+      for (let i = 0; i < this.gridSimpleListContent.length; i++) {
+        const list = this.gridSimpleListContent[i];
+        for (let j = 0; j < list.length; j++) {
+          const element = list[j];
+          this.gridToCsv.push(element);
+        }
+      }
+    },
+    generateFile() {
+      this.processToCsv();
+      var element = document.createElement("a");
+      element.setAttribute(
+        "href",
+        "data:text/csv;charset=utf-8," +
+          encodeURIComponent(Json2Csv(this.gridToCsv))
+      );
+      element.setAttribute("download", "bliptoolkit-analitics.csv");
+      element.style.display = "none";
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
     }
   },
   mounted() {
@@ -164,6 +196,7 @@ export default {
 
           self.gridGroupContent = [];
           self.gridSimpleListContent = [];
+          self.gridToCsv = [];
 
           for (let index = 0; index < listOfTrackings.length; index++) {
             const category = message.pluginMessage.trackings[index];
