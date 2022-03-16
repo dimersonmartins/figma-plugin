@@ -26,7 +26,11 @@ export default {
             {
               text: "Beholder",
               router: "/beholder"
-            }
+            },
+            // {
+            //   text: "Entradas Inesperadas",
+            //   router: "/unexpected-heatmap"
+            // }
           ]
         },
         {

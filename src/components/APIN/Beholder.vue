@@ -41,8 +41,14 @@
                 </thead>
                 <tbody>
                   <tr>
-                    <td nowrap>{{row.extras["#previousStateName"]}}</td>
-                    <td nowrap>{{row.extras["#stateName"]}}</td>
+                    <td nowrap v-if="row.isLoading">
+                      <div class="skeleton skeleton-text" style="width: 30px; height: 30px"></div>
+                    </td>
+                    <td nowrap v-if="row.isLoading">
+                      <div class="skeleton skeleton-text" style="width: 30px; height: 30px"></div>
+                    </td>
+                    <td nowrap v-if="!row.isLoading">{{row.extras["#stateName"]}}</td>
+                    <td nowrap v-if="!row.isLoading">{{row.extras["#stateName"]}}</td>
                     <td nowrap>{{row.action}}</td>
                     <td nowrap>
                       <Modal :modalId="'modal-overflow'+index" :extras="row.extras" />
@@ -72,8 +78,7 @@ export default {
       dataInicio: "",
       dataFim: "",
       gridContent: [],
-      removeList: [],
-      tempList: [],
+      isFirstInteraction: false,
       keyAuthorize: "",
       btnText: "Consultar",
       btnClasstype: "button is-small is-info",
@@ -125,13 +130,15 @@ export default {
     },
     async getTrackDetails(track) {
       const skip = 0;
-
+      const rageDate = this.isFirstInteraction
+        ? this.maxRageDate
+        : this.rageDate;
       const lastTrack = await blipapi.ExtrasTracking(
         this.keyAuthorize,
         track.category,
         track.action,
         skip,
-        this.rageDate
+        rageDate
       );
 
       if (lastTrack.data.status == "success") {
@@ -210,6 +217,7 @@ export default {
           }
 
           await this.delay(2000);
+          this.isFirstInteraction = false;
           await this.getEvents(listOfTrackings);
         }
       } catch (error) {
@@ -232,6 +240,7 @@ export default {
           self.keyAuthorize = message.pluginMessage.data;
         } else {
           const listOfTrackings = message.pluginMessage.trackings;
+          self.isFirstInteraction = true;
           await self.getEvents(listOfTrackings);
         }
       }
@@ -245,8 +254,44 @@ export default {
       const dtfim = today.setMinutes(today.getMinutes() + 30);
       this.dataFim = new Date(dtfim).toISOString();
       return "?startDate=" + this.dataInicio + "&endDate=" + this.dataFim;
+    },
+    maxRageDate() {
+      var today = new Date();
+      const dtinicio = today.setHours(today.getHours() - 1);
+      this.dataInicio = new Date(dtinicio).toISOString();
+      const dtfim = today.setHours(today.getHours() + 3);
+      this.dataFim = new Date(dtfim).toISOString();
+      return "?startDate=" + this.dataInicio + "&endDate=" + this.dataFim;
     }
   },
   watch: {}
 };
 </script>
+<style scoped>
+.skeleton {
+  opacity: 0.7;
+  animation: skeleton-loading 1s linear infinite alternate;
+}
+
+.skeleton-text {
+  width: 100%;
+  height: 0.5rem;
+  margin-bottom: 0.25rem;
+  border-radius: 0.125rem;
+}
+
+.skeleton-text:last-child {
+  margin-bottom: 0;
+  width: 80%;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-color: hsl(200, 20%, 70%);
+  }
+
+  100% {
+    background-color: hsl(200, 20%, 95%);
+  }
+}
+</style>

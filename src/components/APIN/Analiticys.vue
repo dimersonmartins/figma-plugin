@@ -93,7 +93,6 @@ export default {
         "*"
       );
     },
-
     submit() {
       parent.postMessage(
         { pluginMessage: { type: Contants.POSTMESSAGER_ALL_TRACKINGS } },
@@ -169,8 +168,8 @@ export default {
     window.onmessage = async event => {
       const message = event.data.pluginMessage;
       if (message) {
-        const mesgType = message.pluginMessage.type;
-        if (mesgType == Contants.POSTMESSAGER_RESOLVE_STORAGE) {
+        const msgType = message.pluginMessage.type;
+        if (msgType == Contants.POSTMESSAGER_RESOLVE_STORAGE) {
           self.keyAuthorize = message.pluginMessage.data;
         } else {
           const listOfTrackings = message.pluginMessage.trackings;

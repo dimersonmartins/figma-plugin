@@ -29,7 +29,7 @@ async function main(): Promise<void | undefined> {
                     break;
                 case constants.POSTMESSAGER_ALL_TRACKINGS:
                     let trackings = getTrackings();
-                    figma.ui.postMessage({ pluginMessage: { type: constants.POSTMESSAGER_SET_TRACKINGS, trackings } });
+                    figma.ui.postMessage({ pluginMessage: { type: constants.POSTMESSAGER_RESOLVE_TRACKINGS, trackings } });
                     break;
                 case constants.POSTMESSAGER_SET_STORAGE:
                     SetStorage(msg.data.key, msg.data.value);
