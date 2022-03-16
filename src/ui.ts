@@ -3,6 +3,7 @@ import App from './components/Index.vue';
 import store from './store/index';
 import router from './routes/index';
 
+
 Vue.prototype.$Notify = function (message, show) {
   if (show) {
     return `<div>

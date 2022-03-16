@@ -5,7 +5,7 @@
     </nav>
     <div class="box">
       <div class="columns is-gapless">
-        <div class="column"></div>
+         <div class="column"></div>
         <div class="column">
           <div class="field has-addons">
             <div class="control">
@@ -20,45 +20,88 @@
           </div>
         </div>
         <div class="column"></div>
+        <div class="column">
+          <div class="select is-small">
+            <select v-model="selectedGraphicsType">
+              <option v-for="row in graphicsTypes" :key="row.id" :value="row.id">{{row.name}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="column"></div>
+        <!-- <div class="column">
+          <button class="button is-small is-success">Exportar tudo</button>
+        </div> -->
       </div>
     </div>
 
-    <div class="columns is-gapless" v-for="(tracking, index) in gridContent" :key="index">
-      <div class="column"></div>
-      <div class="column is-four-fifths">
-        <div class="box">
-          <span class="tag is-dark">{{tracking.group[0].category}}</span>
-          <hr />
-          <div class="columns is-gapless">
-            <div class="column">Ação</div>
-            <div class="column">Total</div>
-          </div>
-          <div
-            style="overflow: auto"
-            class="columns is-gapless notification is-link is-light"
-            v-for="(track, idx) in tracking.group"
-            :key="idx"
-          >
-            <div class="column">{{track.action}}</div>
-            <div class="column">{{track.count}}</div>
-          </div>
-        </div>
-      </div>
-      <div class="column"></div>
-    </div>
+    <GraphicsGroup
+      :gridContent="gridGroupContent"
+      v-if="selectedGraphicsType == 0 || selectedGraphicsType == 1"
+    />
+    <GraphicsList :gridContent="gridSimpleListContent" v-if="selectedGraphicsType == 2" />
+    <GraphicsLine :gridContent="gridGroupContent" v-if="selectedGraphicsType == 3" />
+    <GraphicsPizza :gridContent="gridGroupContent" v-if="selectedGraphicsType == 4" />
+    <GraphicsBar :gridContent="gridGroupContent" v-if="selectedGraphicsType == 5" />
+    <GraphicsDoughnut :gridContent="gridGroupContent" v-if="selectedGraphicsType == 6" />
   </div>
 </template>
 
 <script>
 import Contants from "../../util/contants";
 import blipapi from "../../services/blipapi";
+import GraphicsGroup from "./Graphics/Group.vue";
+import GraphicsList from "./Graphics/List.vue";
+import GraphicsPizza from "./Graphics/Pizza.vue";
+import GraphicsLine from "./Graphics/Line.vue";
+import GraphicsBar from "./Graphics/Bar.vue";
+import GraphicsDoughnut from "./Graphics/Doughnut.vue";
 export default {
+  components: {
+    GraphicsGroup,
+    GraphicsList,
+    GraphicsPizza,
+    GraphicsLine,
+    GraphicsBar,
+    GraphicsDoughnut
+  },
   data() {
     return {
       dataInicio: "",
       dataFim: "",
       keyAuthorize: "",
-      gridContent: []
+      gridGroupContent: [],
+      gridSimpleListContent: [],
+      selectedGraphicsType: 0,
+      graphicsTypes: [
+        {
+          id: 0,
+          name: "Visualizar em Gráficos"
+        },
+        {
+          id: 1,
+          name: "Grupos"
+        },
+        {
+          id: 2,
+          name: "Lista"
+        },
+        {
+          id: 3,
+          name: "Linha"
+        },
+        {
+          id: 4,
+          name: "Pizza"
+        },
+        {
+          id: 5,
+          name: "Coluna"
+        },
+        {
+          id: 6,
+          name: "Rosca"
+        }
+      ]
     };
   },
   methods: {
@@ -79,6 +122,43 @@ export default {
         { pluginMessage: { type: Contants.POSTMESSAGER_ALL_TRACKINGS } },
         "*"
       );
+    },
+    processListTrack(categories, items) {
+      // this.gridSimpleListContent["categories"] = categories;
+      // this.gridSimpleListContent["items"] = [];
+      // let track = {}
+      // items.forEach(element => {
+      //   track[element.category] = track[element.category] || [];
+      //   track[element.category].push(element);
+      // });
+
+      this.gridSimpleListContent.push(items);
+    },
+    processGroupTracks(items) {
+      let track = {};
+      items.forEach(element => {
+        if (track.hasOwnProperty(element.action)) {
+          track[element.action] = track[element.action] + element.count;
+        } else {
+          track[element.action] = element.count;
+        }
+      });
+
+      let listOfTrack = [];
+
+      for (var prop in track) {
+        let newTrack = items.find(el => el.action == prop);
+        newTrack.count = track[prop];
+        listOfTrack.push(newTrack);
+      }
+
+      const result = listOfTrack.reduce((r, a) => {
+        r["group"] = r["group"] || [];
+        r["group"].push(a);
+        return r;
+      }, {});
+
+      this.gridGroupContent.push(result);
     }
   },
   mounted() {
@@ -91,9 +171,10 @@ export default {
         if (mesgType == Contants.POSTMESSAGER_RESOLVE_STORAGE) {
           self.keyAuthorize = message.pluginMessage.data;
         } else {
-          self.gridContent = [];
-
           const listOfTrackings = message.pluginMessage.trackings;
+
+          self.gridGroupContent = [];
+          self.gridSimpleListContent = [];
 
           for (let index = 0; index < listOfTrackings.length; index++) {
             const category = message.pluginMessage.trackings[index];
@@ -102,31 +183,10 @@ export default {
               category,
               self.rageDate
             );
-            let track = {};
-            let items = resp.data.resource.items;
 
-            items.forEach(element => {
-              if (track.hasOwnProperty(element.action)) {
-                track[element.action] = track[element.action] + element.count;
-              } else {
-                track[element.action] = element.count;
-              }
-            });
-
-            let listOfTrack = [];
-
-            for (var prop in track) {
-              let newTrack = items.find(el => el.action == prop);
-              newTrack.count = track[prop];
-              listOfTrack.push(newTrack);
-            }
-
-            const result = listOfTrack.reduce((r, a) => {
-              r["group"] = r["group"] || [];
-              r["group"].push(a);
-              return r;
-            }, {});
-            self.gridContent.push(result);
+            const items = resp.data.resource.items;
+            self.processGroupTracks(items);
+            self.processListTrack(listOfTrackings, items);
           }
         }
       }
@@ -155,6 +215,7 @@ export default {
         return "?startDate=" + this.dataInicio + "&endDate=" + this.dataFim;
       }
     }
-  }
+  },
+  watch: {}
 };
 </script>
