@@ -3,7 +3,7 @@
     <nav class="breadcrumb" aria-label="breadcrumbs">
       <div class="columns">
         <div class="column is-four-fifths">
-          <span class="tag is-dark">APIN/AIC - Análise</span>
+          <span class="tag is-dark">APIN - Análise</span>
         </div>
         <div class="column"></div>
         <div class="column"></div>
@@ -99,7 +99,7 @@ export default {
         },
         {
           id: 4,
-          name: "Pizza"
+          name: "Setor"
         },
         {
           id: 5,
@@ -107,7 +107,7 @@ export default {
         },
         {
           id: 6,
-          name: "Rosca"
+          name: "Rosquinha"
         }
       ]
     };

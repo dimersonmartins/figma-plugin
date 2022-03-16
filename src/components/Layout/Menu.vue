@@ -16,7 +16,7 @@ export default {
     return {
       options: [
         {
-          title: "APIN/AIC",
+          title: "APIN",
           image: "blipinhoNerd.png",
           options: [
             {
