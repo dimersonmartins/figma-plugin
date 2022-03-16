@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a class="uk-button uk-button-secondary uk-button-small" :href="'#'+modalId" uk-toggle>Abrir</a>
+    <a class="uk-button uk-button-secondary uk-button-small" :href="'#'+modalId" uk-toggle>Extras</a>
 
     <div :id="modalId" uk-modal>
       <div class="uk-modal-dialog">

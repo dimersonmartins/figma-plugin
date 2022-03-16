@@ -36,7 +36,7 @@ async function RangeDateTracking(keyAuthorize, category, rageDate) {
 async function UniqueTracking(keyAuthorize, category) {
     return new Promise((resolve, reject) => {
         const parameter = encodeURIComponent(category)
-        const uri = "/event-track/" + parameter
+        const uri = "/event-track/" + parameter+ "?$take=500"
         api.post("commands",
             {
                 "id": uuidv4(),
@@ -65,7 +65,6 @@ async function ExtrasTracking(keyAuthorize, category, action, skip, rageDate) {
         const parameterCategory = encodeURIComponent(category)
         const parameterAction = encodeURIComponent(action)
         const uri = "/event-track/" + parameterCategory + "/" + parameterAction + rageDate + "&$take=500&$skip=" + skip;
-        console.log(uri)
         api.post("commands",
             {
                 "id": uuidv4(),

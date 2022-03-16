@@ -99,7 +99,7 @@ export default {
         },
         {
           id: 4,
-          name: "Setor"
+          name: "Pizza"
         },
         {
           id: 5,
@@ -107,7 +107,7 @@ export default {
         },
         {
           id: 6,
-          name: "Rosquinha"
+          name: "Rosca"
         }
       ]
     };

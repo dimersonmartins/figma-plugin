@@ -98,6 +98,7 @@ export default {
         this.btnText = "Parar";
         this.btnClasstype = "button is-small is-danger";
         this.btnStart = true;
+        this.trayAgain();
         parent.postMessage(
           { pluginMessage: { type: Contants.POSTMESSAGER_ALL_TRACKINGS } },
           "*"
@@ -107,14 +108,6 @@ export default {
         this.btnClasstype = "button is-small is-info";
         this.btnStart = false;
       }
-    },
-    uuidv4() {
-      return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
-        (
-          c ^
-          (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
-        ).toString(16)
-      );
     },
     sortList() {
       this.gridContent = this.gridContent.sort((a, b) => {
@@ -173,9 +166,6 @@ export default {
       return await new Promise(resolve => setTimeout(resolve, time));
     },
     async getTrackDetails(track) {
-      const idRequest = this.uuidv4();
-
-      console.log("getTrackDetails", idRequest);
       const skip = 0;
 
       const lastTrack = await blipapi.ExtrasTracking(
@@ -188,18 +178,32 @@ export default {
 
       if (lastTrack.data.status == "success") {
         if (lastTrack.data.resource.hasOwnProperty("items")) {
-          const trakcWithExtras = lastTrack.data.resource.items;
-          if (trakcWithExtras.length == 0) {
-            this.removeList.push(track);
-          }
+          const trackWithExtras = lastTrack.data.resource.items;
 
-          for (let index = 0; index < trakcWithExtras.length; index++) {
-            const element = trakcWithExtras[index];
-            element["count"] = track.count;
-            this.gridContent.push(element);
-            this.removeList.push(element);
-            this.updateTrack(track);
-          }
+          trackWithExtras.forEach(element => {
+            const indexIsLoading = this.gridContent.findIndex(
+              el =>
+                el.category == element.category &&
+                el.action == element.action &&
+                el.isLoading == true
+            );
+            console.log("indexIsLoading", indexIsLoading);
+            console.log("loading", this.gridContent[indexIsLoading]);
+
+            this.$set(this.gridContent, indexIsLoading, {
+              isLoading: false,
+              ...element
+            });
+          });
+        }
+      }
+    },
+    async trayAgain() {
+      for (let index = 0; index < this.gridContent.length; index++) {
+        const track = this.gridContent[index];
+        if (track.isLoading) {
+          await this.getTrackDetails(track);
+          this.sortList();
         }
       }
     },
@@ -220,22 +224,38 @@ export default {
                 const tracks = resource.items;
                 for (let idx = 0; idx < tracks.length; idx++) {
                   const track = tracks[idx];
-                  console.log(this.isDuplicate(this.tempList, track));
-                  if (!this.isDuplicate(this.tempList, track)) {
+
+                  const gridTrack = this.gridContent.filter(
+                    el =>
+                      el.category == track.category && el.action == track.action
+                  );
+
+                  const diff = track.count - gridTrack.length;
+
+                  for (let index = 0; index < diff; index++) {
+                    this.gridContent.push({
+                      category: track.category,
+                      action: track.action,
+                      storageDate: Date.now(),
+                      isLoading: true,
+                      extras: {
+                        "#previousStateName": "Carregando...",
+                        "#stateName": "Carregando..."
+                      }
+                    });
+
+                    this.sortList();
                     await this.getTrackDetails(track);
                     this.sortList();
-                    this.tempList.push(track);
                   }
                 }
               }
             }
           }
+
+          await this.delay(2000);
+          await this.getEvents(listOfTrackings);
         }
-        console.log("start delay");
-        await this.delay(2000);
-        console.log("end delay");
-        await this.removeDuplicate();
-        await this.getEvents(listOfTrackings);
       } catch (error) {
         console.log(error);
         this.logger = "Ocorreu um erro!";
