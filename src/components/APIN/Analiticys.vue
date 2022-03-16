@@ -44,11 +44,10 @@
       :gridContent="gridGroupContent"
       v-if="selectedGraphicsType == 0 || selectedGraphicsType == 1"
     />
-    <!-- <GraphicsList :gridContent="gridSimpleListContent" v-if="selectedGraphicsType == 2" /> -->
-    <GraphicsLine :gridContent="gridGroupContent" v-if="selectedGraphicsType == 3" />
-    <GraphicsPizza :gridContent="gridGroupContent" v-if="selectedGraphicsType == 4" />
-    <GraphicsBar :gridContent="gridGroupContent" v-if="selectedGraphicsType == 5" />
-    <GraphicsDoughnut :gridContent="gridGroupContent" v-if="selectedGraphicsType == 6" />
+    <GraphicsLine :gridContent="gridGroupContent" v-if="selectedGraphicsType == 2" />
+    <GraphicsPizza :gridContent="gridGroupContent" v-if="selectedGraphicsType == 3" />
+    <GraphicsBar :gridContent="gridGroupContent" v-if="selectedGraphicsType == 4" />
+    <GraphicsDoughnut :gridContent="gridGroupContent" v-if="selectedGraphicsType == 5" />
   </div>
 </template>
 
