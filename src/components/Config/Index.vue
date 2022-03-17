@@ -14,6 +14,11 @@
         </div>
       </div>
     </div>
+
+    <div class="notification is-primary" v-if="notify.show">
+      <button class="delete" @click="notify.show = false"></button>
+      {{notify.message}}
+    </div>
   </div>
 </template>
 
@@ -25,7 +30,11 @@ export default {
       activeUser: null,
       token: "",
       btnText: "Salvar",
-      textDisable: false
+      textDisable: false,
+      notify: {
+        message: "",
+        show: false
+      }
     };
   },
   methods: {
@@ -68,6 +77,9 @@ export default {
         "*"
       );
       this.getStorage();
+      this.initialcharacter = "";
+      this.notify.message = "Concluído";
+      this.notify.show = true;
     }
   },
   mounted() {

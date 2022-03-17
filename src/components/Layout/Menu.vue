@@ -24,7 +24,7 @@ export default {
               router: "/analiticys"
             },
             {
-              text: "Beholder",
+              text: "Testes",
               router: "/beholder"
             },
             // {

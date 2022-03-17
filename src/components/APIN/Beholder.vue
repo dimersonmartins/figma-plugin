@@ -1,7 +1,7 @@
 <template>
   <div>
     <nav class="breadcrumb" aria-label="breadcrumbs">
-      <span class="tag is-dark">APIN - Beholder</span>
+      <span class="tag is-dark">APIN - Testes</span>
     </nav>
     <div class="columns">
       <div class="column"></div>
