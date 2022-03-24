@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="box" style="height: 150px">
+    <div class="box" style="height: 200px">
       <article class="media">
         <div class="media-left">
           <figure class="image is-48x48">

@@ -19,6 +19,9 @@ async function main(): Promise<void | undefined> {
 
         figma.ui.onmessage = msg => {
             switch (msg.type) {
+                case constants.POSTMESSAGER_RESIZE_SCREEN:
+                    figma.ui.resize(100, 100)
+                    break;
                 case constants.POSTMESSAGER_GET_ACTIVE_USER:
                     break;
                 case constants.POSTMESSAGER_CHANGE_ID:
@@ -35,11 +38,22 @@ async function main(): Promise<void | undefined> {
                     SetStorage(msg.data.key, msg.data.value);
                     break;
                 case constants.POSTMESSAGER_GET_STORAGE:
-                    GetStorage(msg.data.key).then((data) => {
-                        figma.ui.postMessage({ pluginMessage: { type: constants.POSTMESSAGER_RESOLVE_STORAGE, data } });
-                    }).catch((error) => {
-                        console.log(error)
-                    })
+                    if (msg.data.key == "token") {
+                        GetStorage(msg.data.key).then((data) => {
+                            figma.ui.postMessage({ pluginMessage: { type: constants.POSTMESSAGER_RESOLVE_TOKEN_STORAGE, data } });
+                        }).catch((error) => {
+                            console.log(error)
+                        })
+                    }
+
+                    if (msg.data.key == "variables") {
+                        GetStorage(msg.data.key).then((data) => {
+                            figma.ui.postMessage({ pluginMessage: { type: constants.POSTMESSAGER_RESOLVE_VARIABLES_STORAGE, data } });
+                        }).catch((error) => {
+                            console.log(error)
+                        })
+                    }
+
                     break;
             }
         }

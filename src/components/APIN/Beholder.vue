@@ -236,7 +236,7 @@ export default {
       const message = event.data.pluginMessage;
       if (message) {
         const mesgType = message.pluginMessage.type;
-        if (mesgType == Contants.POSTMESSAGER_RESOLVE_STORAGE) {
+        if (mesgType == Contants.POSTMESSAGER_RESOLVE_TOKEN_STORAGE) {
           self.keyAuthorize = message.pluginMessage.data;
         } else {
           const listOfTrackings = message.pluginMessage.trackings;

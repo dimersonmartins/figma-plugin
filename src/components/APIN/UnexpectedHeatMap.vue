@@ -1,13 +1,27 @@
 <template>
   <div>
-    <div class="box">
+    <nav class="breadcrumb" aria-label="breadcrumbs">
       <div class="columns">
         <div class="column is-four-fifths">
-          <h2 class="subtitle">Entradas inesperadas</h2>
+          <span class="tag is-dark">APIN - Entradas inesperadas</span>
         </div>
+      </div>
+    </nav>
+    <div class="box">
+      <div class="columns">
         <div class="column"></div>
-        <div class="column">
-          <button class="button is-small is-success" @click="submit">Consultar</button>
+        <div class="column is-four-fifths">
+          <div class="field has-addons">
+            <div class="control">
+              <input class="input" type="date" v-model="dataInicio" placeholder="Data inicial" />
+            </div>
+            <div class="control">
+              <input class="input" v-model="dataFim" type="date" placeholder="Data final" />
+            </div>
+            <div class="control">
+              <button class="button is-small is-success" @click="submit">Consultar</button>
+            </div>
+          </div>
         </div>
       </div>
       <div class="columns is-gapless" v-for="(tracking, index) in gridContent" :key="index">
@@ -39,19 +53,25 @@
 </template>
 
 <script>
+import Modal from "./Modal.vue";
 import Contants from "../../util/contants";
 import blipapi from "../../services/blipapi";
 export default {
+  components: {
+    Modal
+  },
   data() {
     return {
       dataInicio: "",
       dataFim: "",
-      gridGroupContent: [],
-      keyAuthorize: ""
+      gridContent: [],
+      isFirstInteraction: false,
+      keyAuthorize: "",
+      btnText: "Consultar",
+      btnClasstype: "button is-small is-info",
+      btnStart: false,
+      logger: ""
     };
-  },
-  props: {
-    gridContent: { type: Array }
   },
   methods: {
     getStorage() {
@@ -70,34 +90,115 @@ export default {
         { pluginMessage: { type: Contants.POSTMESSAGER_ALL_TRACKINGS } },
         "*"
       );
+    },
+    sortList() {
+      this.gridContent = this.gridContent.sort((a, b) => {
+        if (a.storageDate < b.storageDate) {
+          return 1;
+        }
+        if (a.storageDate > b.storageDate) {
+          return -1;
+        }
+        return 0;
+      });
+    },
+    async delay(time) {
+      return await new Promise(resolve => setTimeout(resolve, time));
+    },
+    async getTrackDetails(track) {
+      const skip = 0;
+      const lastTrack = await blipapi.ExtrasTracking(
+        this.keyAuthorize,
+        track.category,
+        track.action,
+        skip,
+        this.rageDate
+      );
+
+      if (lastTrack.data.status == "success") {
+        if (lastTrack.data.resource.hasOwnProperty("items")) {
+          const trackWithExtras = lastTrack.data.resource.items;
+
+          trackWithExtras.forEach(element => {
+            const indexIsLoading = this.gridContent.findIndex(
+              el =>
+                el.category == element.category &&
+                el.action == element.action &&
+                el.isLoading == true
+            );
+
+            this.$set(this.gridContent, indexIsLoading, {
+              isLoading: false,
+              ...element
+            });
+          });
+        }
+      }
+    },
+    async getEvents(listOfTrackings) {
+      try {
+        for (let index = 0; index < listOfTrackings.length; index++) {
+          const category = listOfTrackings[index];
+          const resp = await blipapi.RangeDateTracking(
+            this.keyAuthorize,
+            category,
+            this.rageDate
+          );
+          console.log(JSON.stringify(resp));
+          const resource = resp.data.resource;
+          if (resp.data.status == "success") {
+            if (resource.hasOwnProperty("items")) {
+              const tracks = resource.items;
+              for (let idx = 0; idx < tracks.length; idx++) {
+                const track = tracks[idx];
+
+                const gridTrack = this.gridContent.filter(
+                  el =>
+                    el.category == track.category && el.action == track.action
+                );
+
+                const diff = track.count - gridTrack.length;
+
+                for (let index = 0; index < diff; index++) {
+                  this.gridContent.push({
+                    category: track.category,
+                    action: track.action,
+                    storageDate: Date.now(),
+                    isLoading: true,
+                    extras: {
+                      "#previousStateName": "Carregando...",
+                      "#stateName": "Carregando..."
+                    }
+                  });
+
+                  this.sortList();
+                  await this.getTrackDetails(track);
+                  this.sortList();
+                }
+              }
+            }
+          }
+        }
+
+        console.log(JSON.stringify(this.gridContent));
+      } catch (error) {
+        console.log(error);
+      }
     }
   },
   async mounted() {
-    this.getStorage();
     let self = this;
+    this.getStorage();
     window.onmessage = async event => {
       const message = event.data.pluginMessage;
       if (message) {
-        const msgType = message.pluginMessage.type;
-        if (msgType == Contants.POSTMESSAGER_RESOLVE_STORAGE) {
+        const mesgType = message.pluginMessage.type;
+        if (mesgType == Contants.POSTMESSAGER_RESOLVE_STORAGE) {
           self.keyAuthorize = message.pluginMessage.data;
-        }
-        if (msgType == Contants.po) {
-          self.keyAuthorize = message.pluginMessage.data;
-        }
-        if (msgType == Contants.POSTMESSAGER_RESOLVE_TRACKINGS) {
-          const list = message.pluginMessage.trackings;
-          for (let index = 0; index < list.length; index++) {
-            const category = list[index];
-            if (category.includes("inesperado")) {
-              let resp = await blipapi.RangeDateTracking(
-                self.keyAuthorize,
-                category,
-                self.rageDate
-              );
-              const items = resp.data.resource.items;
-            }
-          }
+        } else {
+          const listOfTrackings = message.pluginMessage.trackings;
+          self.isFirstInteraction = true;
+          await self.getEvents(listOfTrackings);
         }
       }
     };
@@ -125,9 +226,35 @@ export default {
         return "?startDate=" + this.dataInicio + "&endDate=" + this.dataFim;
       }
     }
-  }
+  },
+  watch: {}
 };
 </script>
+<style scoped>
+.skeleton {
+  opacity: 0.7;
+  animation: skeleton-loading 1s linear infinite alternate;
+}
 
-<style>
+.skeleton-text {
+  width: 100%;
+  height: 0.5rem;
+  margin-bottom: 0.25rem;
+  border-radius: 0.125rem;
+}
+
+.skeleton-text:last-child {
+  margin-bottom: 0;
+  width: 80%;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-color: hsl(200, 20%, 70%);
+  }
+
+  100% {
+    background-color: hsl(200, 20%, 95%);
+  }
+}
 </style>

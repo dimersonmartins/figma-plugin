@@ -6,9 +6,12 @@
           <span class="tag is-dark">APIN - Análise</span>
         </div>
         <div class="column"></div>
-        <div class="column"></div>
-        <div class="column" v-if="gridGroupContent.length > 0">
-          <button class="button is-small is-success" @click="generateFile">Exportar</button>
+        <div class="column">
+          <button
+            class="button is-small is-success"
+            @click="generateFile"
+            v-if="gridGroupContent.length > 0"
+          >Exportar</button>
         </div>
       </div>
     </nav>
@@ -75,7 +78,9 @@ export default {
       dataInicio: "",
       dataFim: "",
       keyAuthorize: "",
+      filterCategoryName: "",
       gridGroupContent: [],
+      listOfVariables: [],
       gridSimpleListContent: [],
       selectedGraphicsType: 0,
       gridToCsv: []
@@ -88,6 +93,15 @@ export default {
           pluginMessage: {
             type: Contants.POSTMESSAGER_GET_STORAGE,
             data: { key: "token" }
+          }
+        },
+        "*"
+      );
+      parent.postMessage(
+        {
+          pluginMessage: {
+            type: Contants.POSTMESSAGER_GET_STORAGE,
+            data: { key: "variables" }
           }
         },
         "*"
@@ -160,6 +174,30 @@ export default {
           });
         }
       });
+    },
+    async processCategoryRequest(category) {
+      let resp = await blipapi.RangeDateTracking(
+        this.keyAuthorize,
+        category,
+        this.rageDate
+      );
+
+      const items = resp.data.resource.items;
+      this.processGroupTracks(items);
+      this.gridSimpleListContent.push(items);
+    },
+    async processFromVariables(category) {
+      if (this.listOfVariables.length > 0) {
+        for (let index = 0; index < this.listOfVariables.length; index++) {
+          const variable = this.listOfVariables[index];
+          console.log(category.replace(variable.key, variable.value));
+          await this.processCategoryRequest(
+            category.replace(variable.key, variable.value)
+          );
+        }
+      } else {
+        await this.processCategoryRequest(category);
+      }
     }
   },
   mounted() {
@@ -169,8 +207,11 @@ export default {
       const message = event.data.pluginMessage;
       if (message) {
         const msgType = message.pluginMessage.type;
-        if (msgType == Contants.POSTMESSAGER_RESOLVE_STORAGE) {
+        if (msgType == Contants.POSTMESSAGER_RESOLVE_TOKEN_STORAGE) {
           self.keyAuthorize = message.pluginMessage.data;
+        }
+        if (msgType == Contants.POSTMESSAGER_RESOLVE_VARIABLES_STORAGE) {
+          self.listOfVariables = JSON.parse(message.pluginMessage.data);
         } else {
           const listOfTrackings = message.pluginMessage.trackings;
 
@@ -180,15 +221,7 @@ export default {
 
           for (let index = 0; index < listOfTrackings.length; index++) {
             const category = message.pluginMessage.trackings[index];
-            let resp = await blipapi.RangeDateTracking(
-              self.keyAuthorize,
-              category,
-              self.rageDate
-            );
-
-            const items = resp.data.resource.items;
-            self.processGroupTracks(items);
-            self.gridSimpleListContent.push(items);
+            await self.processFromVariables(category);
           }
           self.processCountAllTrackings();
         }

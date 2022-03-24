@@ -33,16 +33,16 @@ export default {
             // }
           ]
         },
-        {
-          title: "UX",
-          image: "blipinhoApaixonado.png",
-          options: [
-            {
-              text: "Identificadores",
-              router: "/identity"
-            }
-          ]
-        },
+        // {
+        //   title: "UX",
+        //   image: "blipinhoApaixonado.png",
+        //   options: [
+        //     {
+        //       text: "Identificadores",
+        //       router: "/identity"
+        //     }
+        //   ]
+        // },
         // {
         //   title: "DEV",
         //   image: "blipinhoOMelhor.png",
